@@ -9,11 +9,12 @@ body {
   font-weight: 500;
   line-height: 17px;
   font-family: "Inter", sans-serif;
+  letter-spacing: 0.05em;
 }
 
 /* Colors */
 .text-pry {
-  color: #25213b;
+  color: #6e6893;
 }
 
 .text-pry-var {
@@ -58,3 +59,31 @@ h1 {
   border-bottom: 2px solid #25213b;
 }
 
+.h-card {
+  background: #FFFFFF;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+}
+
+table {
+  width: 100%;
+}
+
+th {
+  background-color: #F4F2FF; padding: 11px 20px;
+}
+
+td {
+  padding: 11px 20px;
+}
+
+tr {
+  text-align: left;
+  border-top: 1px solid #e7eaf4;
+}
+
+
+.h-link {
+  font-size: 12px;
+  line-height: 15px;
+}

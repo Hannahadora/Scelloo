@@ -2,7 +2,7 @@
   <div class="search-card">
     <img src="../assets/images/Search.png" alt="" />
     <input
-      class="search-input"
+      class="search-input focus:outline-none w-10/12"
       type="text"
       placeholder="Search Users by Name, Email or Date"
     />

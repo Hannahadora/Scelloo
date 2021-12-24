@@ -4,85 +4,228 @@
 
     <div class="nav-header">
       <ul class="nav">
-        <li>All</li>
-        <li>Paid</li>
-        <li>Unpaid</li>
-        <li>Overdue</li>
+        <li :class="{ 'active-nav': type === '' }" @click="filterType('')">
+          All
+        </li>
+        <li
+          :class="{ 'active-nav': type === 'paid' }"
+          @click="filterType('paid')"
+        >
+          Paid
+        </li>
+        <li
+          :class="{ 'active-nav': type === 'unpaid' }"
+          @click="filterType('unpaid')"
+        >
+          Unpaid
+        </li>
+        <li
+          :class="{ 'active-nav': type === 'overdue' }"
+          @click="filterType('overdue')"
+        >
+          Overdue
+        </li>
       </ul>
 
-      <p>Total payable amount: <span class="font-bold">$900.00</span> USD</p>
+      <p>
+        Total payable amount:
+        <span class="font-bold">${{ totalPayableAmount }}</span> USD
+      </p>
     </div>
 
-   <div class="h-card mt-5 w-full">
-    <div class="px-5 py-4 flex items-center justify-between">
-      <div class="flex items-center gap-5">
-        <FilterBtn />
-        <Search />
+    <div class="h-card mt-5 w-full">
+      <div class="px-5 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-5">
+          <HFilter :displayedArray="filteredUsers" />
+          <Search v-model="searchWord" />
+        </div>
+
+        <PayDues />
       </div>
 
-      <PayDues />
-    </div>
-
       <table class="w-full">
-      <tr>
-        <th><input type="checkbox"></th>
-        <th>name</th>
-        <th>user status</th>
-        <th>payment</th>
-        <th>amount</th>
-        <th>  <img src="../assets/images/More.png" alt="" /></th>
-      </tr>
-
-      <tbody>
-        <tr v-for="user in users" :key="user.id">
-          <td class="flex items-center gap-7">
-            <input type="checkbox">
-            <img src="../assets/images/Down.png" alt="" />
-          </td>
-          <td>
-            <span class="text-pry-var">{{ user.firstName }} {{ user.lastName }}</span><br>
-            <span class="text-pry">{{ user.email }}</span>
-          </td>
-          <td>
-            <Label active >{{ user.userStatus }}</Label><br>
-            <span class="text-pry-var text-xs">Last login: {{ user.lastLogin }}</span>
-          </td>
-          <td>{{ user.paymentStatus }}</td>
-          <td>
-            <span>{{ user.amountInCents }}</span><br>
-            <span>USD</span>
-          </td>
-          <td class="flex items-center gap-7">
-            <span>View more</span>
+        <tr>
+          <th><input class="chec" type="checkbox" /></th>
+          <th>name</th>
+          <th>user status</th>
+          <th>payment</th>
+          <th class="text-right">amount</th>
+          <th class="flex items-center justify-end">
             <img src="../assets/images/More.png" alt="" />
-          </td>
+          </th>
         </tr>
-      </tbody>
-    </table>
+
+        <tbody>
+          <tr class="cursor-pointer" @click="openDetails = true" v-for="user in filteredUsers" :key="user.id">
+            <td class="flex items-center gap-7">
+              <input class="chec" type="checkbox" />
+              <img src="../assets/images/Down.png" alt="" />
+            </td>
+            <td>
+              <span class="text-pry-var"
+                >{{ user.firstName }} {{ user.lastName }}</span
+              ><br />
+              <span class="text-pry">{{ user.email }}</span>
+            </td>
+            <td>
+              <div class="flex">
+                <Label
+                  :active="user.userStatus === 'active'"
+                  :inactive="user.userStatus === 'inactive'"
+                  >{{ user.userStatus }}</Label
+                >
+              </div>
+              <span class="text-pry-var text-xs"
+                >Last login: {{ user.lastLogin }}</span
+              >
+            </td>
+            <td>
+              <div class="flex">
+                <Label
+                  :paid="user.paymentStatus === 'paid'"
+                  :unpaid="user.paymentStatus === 'unpaid'"
+                  :overdue="user.paymentStatus === 'overdue'"
+                  >{{ user.paymentStatus }}</Label
+                >
+              </div>
+              <span class="text-pry-var text-xs"
+                >Paid on: {{ user.paidOn }}</span
+              >
+            </td>
+            <td class="text-right">
+              <span class="text-pry-var">${{ user.amountInCents * 0.01 }}</span
+              ><br />
+              <span class="text-xs">USD</span>
+            </td>
+            <td class="">
+              <MoreMenu
+                @activateUser="activateUser(user.id)"
+                @deleteuser="deleteUser(user.id)"
+              />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div v-if="users" class="paginator flex items-center justify-end py-4 px-5">
+        <div class="flex items-center gap-3">
+          <span class="">Rows per page: 10</span>
+          <img src="../assets/images/Polygon 3.png" alt="" />
+        </div>
+        <span>1-10 of {{ users ? users.length : "loading" }}</span>
+        <img
+          class="cursor-pointer"
+          src="../assets/images/Vector (3).png"
+          alt=""
+        />
+        <img
+          class="cursor-pointer"
+          src="../assets/images/Vector (4).png"
+          alt=""
+        />
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters } from "vuex";
 
 import Label from "../components/Label.vue";
-import FilterBtn from "../components/FilterBtn.vue";
-import PayDues from '../components/PayDues.vue';
+import HFilter from "../components/HFilter.vue";
+import PayDues from "../components/PayDues.vue";
 import Search from "../components/Search.vue";
+import MoreMenu from "../components/MoreMenu.vue";
 export default {
   name: "Home",
-  components: { FilterBtn, Search, PayDues, Label },
+  components: { HFilter, Search, PayDues, Label, MoreMenu },
+  data() {
+    return {
+      type: "",
+      searchWord: "",
+      openDetails: false,
+    };
+  },
+
+  watch: {
+    searchWord() {
+      if (this.searchWord) {
+        return this.filteredUsers.filter((user) =>
+          user.firstName.toLowerCase().includes(this.searchWord)
+        );
+      } else {
+        return this.filteredUsers;
+      }
+    },
+  },
 
   computed: {
     ...mapGetters({
-      users: ['getUsers']
-    })
+      users: ["getUsers"],
+    }),
+
+    filteredUsers() {
+      if (this.searchWord) {
+        return (
+          this.users &&
+          this.users.filter(
+            (user) =>
+              user.firstName.toLowerCase().includes(this.searchWord) ||
+              user.lastName.toLowerCase().includes(this.searchWord) ||
+              user.email.toLowerCase().includes(this.searchWord)
+          )
+        );
+      }
+      return (
+        this.users &&
+        this.users.filter((user) => {
+          switch (this.type) {
+            case "paid":
+              return user.paymentStatus === "paid";
+            case "unpaid":
+              return user.paymentStatus === "unpaid";
+            case "overdue":
+              return user.paymentStatus === "overdue";
+            default:
+              return true;
+          }
+        })
+      );
+    },
+
+    totalPayableAmount() {
+      if (this.users) {
+        const dues =
+          this.users &&
+          this.users.filter(
+            (user) =>
+              user.paymentStatus === "unpaid" ||
+              user.paymentStatus === "overdue"
+          );
+        const totalDues =
+          dues && dues.map((el) => el.amountInCents).reduce((a, b) => a + b);
+        return totalDues * 0.01;
+      }
+      return "0.00";
+    },
+  },
+
+  methods: {
+    filterType(type) {
+      this.type = type;
+    },
+
+    activateUser(id) {
+      this.$store.dispatch("activate", id);
+    },
+
+    deleteUser(id) {
+      this.$store.dispatch("removeUser", id);
+    },
   },
 
   mounted() {
-    this.$store.dispatch('fetchUsers')
-  }
+    this.$store.dispatch("fetchUsers");
+  },
 };
 </script>
 
@@ -94,5 +237,18 @@ export default {
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+}
+
+.chec {
+  width: 20px;
+  height: 20px;
+}
+
+.paginator {
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 15px;
+  background: #f4f2ff;
+  gap: 50px;
 }
 </style>

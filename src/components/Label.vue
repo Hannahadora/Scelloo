@@ -1,105 +1,101 @@
 <template>
-  <div class="h-label">
+  <div
+    class="h-label flex items-center gap-1"
+    :class="{
+      activeStyle: active,
+      inactiveStyle: inactive,
+      paidStyle: paid,
+      unpaidStyle: unpaid,
+      overdueStyle: overdue,
+    }"
+  >
+    <div
+      class="h-eclipse"
+      :class="{
+        'bg-active': active,
+        'bg-pry': inactive,
+        'bg-positive': paid,
+        'bg-unpaid': unpaid,
+        'bg-negative': overdue,
+      }"
+    ></div>
     <slot></slot>
   </div>
 </template>
 
 <script>
 export default {
-    name: 'Label',
-    data() {
-        return {
-activeStyle: {
-    background: "#E6E6F2",
-    color: "#4A4AFF",
-},
+  name: "Label",
+  data() {
+    return {};
+  },
 
-inactiveStyle: {
-    background: "#F2F0F9",
-    color: "#6E6893",
-},
-
-paidStyle: {
-    background: "#CDFFCD",
-    color: "#007F00",
-},
-
-unpaidStyle: {
-    background: "#FFECCC",
-    color: "#965E00",
-},
-
-overdueStyle: {
-    background: "#FFE0E0",
-    color: "#D30000",
-}
-        }
+  props: {
+    active: {
+      type: Boolean,
     },
-
-    props: {
-        active: {
-            type: Boolean,
-        },
-        inactive: {
-            type: Boolean,
-        },
-        paid: {
-            type: Boolean,
-        },
-        unpaid: {
-            type: Boolean,
-        },
-        overdue: {
-            type: Boolean,
-        },
+    inactive: {
+      type: Boolean,
     },
+    paid: {
+      type: Boolean,
+    },
+    unpaid: {
+      type: Boolean,
+    },
+    overdue: {
+      type: Boolean,
+    },
+  },
 
-    computed: {
-        style() {
-            return {
-                ...(this.active && this.activeStyle),
-                ...(this.inactive && this.inactiveStyle),
-                ...(this.paid && this.paidStyle),
-                ...(this.unpaid && this.unpaidStyle),
-                ...(this.overdue && this.overdueStyle),
-                textTransform: "capitalize",
-            };
-        },
-  }
+  computed: {},
 };
 </script>
 
 <style>
 .h-label {
-    padding: 5px;
-    font-size: 12px;
-   line-height: 15px;
-border-radius: 10px;
+  width: auto;
+  padding: 5px;
+  font-size: 12px;
+  line-height: 15px;
+  border-radius: 10px;
+  text-transform: capitalize;
 }
-/* 
+
+.h-eclipse {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
 .activeStyle {
-    background: #E6E6F2;
-    color: #4A4AFF;
+  background: #e6e6f2;
+  color: #4a4aff;
 }
 
 .inactiveStyle {
-    background: #F2F0F9;
-    color: #6E6893;;
+  background: #f2f0f9;
+  color: #6e6893;
 }
 
 .paidStyle {
-    background: #CDFFCD;
-    color: #007F00;
+  background: #cdffcd;
+  color: #007f00;
 }
 
 .unpaidStyle {
-    background: #FFECCC;
-    color: #965E00
-;
+  background: #ffeccc;
+  color: #965e00;
 }
 .overdueStyle {
-    background: #FFE0E0;
-    color: #D30000
-;
-} */
+  background: #ffe0e0;
+  color: #d30000;
+}
+
+.bg-active {
+  background: #4a4aff;
+}
+.bg-unpaid {
+  background: #965e00;
+}
 </style>

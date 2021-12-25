@@ -55,8 +55,8 @@
           </th>
         </tr>
 
-        <tbody>
-          <tr class="cursor-pointer" @click="openDetails = true" v-for="user in filteredUsers" :key="user.id">
+        <tbody v-for="user in filteredUsers" :key="user.id">
+          <tr class="cursor-pointer" @click="openDetails = !openDetails">
             <td class="flex items-center gap-7">
               <input class="chec" type="checkbox" />
               <img src="../assets/images/Down.png" alt="" />
@@ -104,23 +104,34 @@
               />
             </td>
           </tr>
+          <tr v-if="openDetails">
+            <td colspan="5"><Act :activities="user.activities" /> </td>
+          </tr>
         </tbody>
       </table>
-      <div v-if="users" class="paginator flex items-center justify-end py-4 px-5">
+      <div
+        v-if="users"
+        class="paginator flex items-center justify-end py-4 px-5"
+      >
         <div class="flex items-center gap-3">
-          <span class="">Rows per page: 10</span>
+          <span class="">Rows per page: {{ totalNumPerPage }}</span>
           <img src="../assets/images/Polygon 3.png" alt="" />
         </div>
-        <span>1-10 of {{ users ? users.length : "loading" }}</span>
+        <span
+          >{{ pageNumber }}-{{ totalNumPerPage }} of
+          {{ users ? users.length : "loading" }}</span
+        >
         <img
           class="cursor-pointer"
           src="../assets/images/Vector (3).png"
           alt=""
+          @click="previousPage"
         />
         <img
           class="cursor-pointer"
           src="../assets/images/Vector (4).png"
           alt=""
+          @click="nextPage"
         />
       </div>
     </div>
@@ -135,14 +146,18 @@ import HFilter from "../components/HFilter.vue";
 import PayDues from "../components/PayDues.vue";
 import Search from "../components/Search.vue";
 import MoreMenu from "../components/MoreMenu.vue";
+import Act from '../components/Act.vue';
 export default {
   name: "Home",
-  components: { HFilter, Search, PayDues, Label, MoreMenu },
+  components: { HFilter, Search, PayDues, Label, MoreMenu, Act },
   data() {
     return {
       type: "",
       searchWord: "",
       openDetails: false,
+      totalNumPerPage: 10,
+      pageNumber: 1,
+      totalPages: null,
     };
   },
 
@@ -221,10 +236,30 @@ export default {
     deleteUser(id) {
       this.$store.dispatch("removeUser", id);
     },
+
+    getTotalPages() {
+      if (this.users) {
+        this.totalPages = this.users.length / this.totalNumPerPage;
+      }
+      this.totalPages = 0;
+    },
+
+    nextPage() {
+      if(this.totalPages > this.pageNumber) {
+        this.pageNumber++
+      }
+    },
+
+    previousPage() {
+      if(this.pageNumber <= this.totalPages && this.pageNumber !== 0) {
+        this.pageNumber--
+      }
+    }
   },
 
   mounted() {
     this.$store.dispatch("fetchUsers");
+    this.getTotalPages();
   },
 };
 </script>

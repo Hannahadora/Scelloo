@@ -4,6 +4,9 @@ import Vuex from 'vuex'
 
 import axios from 'axios';
 
+import createPersistedState from "vuex-persistedstate";
+import * as Cookies from "js-cookie";
+
 const api = axios.create({
   baseURL: process.env.VUE_APP_BASE_URL,
   // headers: {
@@ -11,10 +14,22 @@ const api = axios.create({
   // }
 })
 
-
 Vue.use(Vuex)
 
 export default new Vuex.Store({
+
+  plugins: [
+    createPersistedState({
+      paths: ["users"],
+      // storage: {
+      //   getItem: (key) => Cookies.get(key),
+      //   setItem: (key, value) =>
+      //     Cookies.set(key, value, { expires: 3, secure: true }),
+      //   removeItem: (key) => Cookies.remove(key),
+      // },
+    }),
+  ],
+
   state: {
     users: [],
     loading: false
@@ -57,7 +72,7 @@ export default new Vuex.Store({
     markAsPaid: async ({ commit, dispatch }, id) => {
       commit("SET_LOADING", true);
       try {
-        const res = await api.markUserAsPaid(id)
+        const res = await api.patch(`/mark-paid/${id}`)
         if(res.status === 'true') {
           commit('SET_USERS', res.data)
         }
@@ -71,7 +86,7 @@ export default new Vuex.Store({
     deactivate: async ({ commit, dispatch }, id) => {
       commit("SET_LOADING", true);
       try {
-        const res = await api.deactivateUser(id)
+        const res = await api.patch(`/deactivate-user/${id}`)
         if(res.status === 'true') {
           commit('SET_USERS', res.data)
         }

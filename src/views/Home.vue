@@ -47,7 +47,7 @@
         <tr>
           <th><input class="chec" type="checkbox" /></th>
           <th>name</th>
-          <th>user status</th>
+          <th class="pr-48">user status</th>
           <th>payment</th>
           <th class="text-right">amount</th>
           <th class="flex items-center justify-end">
@@ -55,10 +55,14 @@
           </th>
         </tr>
 
-        <tbody v-for="user in filteredUsers" :key="user.id">
-          <tr class="cursor-pointer" @click="openDetails = !openDetails">
-            <td class="flex items-center gap-7">
-              <input class="chec" type="checkbox" />
+        <tbody
+          class="w-full"
+          v-for="user in displayedUsers"
+          :key="user.id"
+        >
+          <tr class="cursor-pointer" @click="setCurrentUser(user)">
+            <td class="flex items-center justify-center gap-5">
+              <input class="chec" type="checkbox" :id="user.id" v-model="isSelected" />
               <img src="../assets/images/Down.png" alt="" />
             </td>
             <td>
@@ -67,7 +71,7 @@
               ><br />
               <span class="text-pry">{{ user.email }}</span>
             </td>
-            <td>
+            <td class="pr-48">
               <div class="flex">
                 <Label
                   :active="user.userStatus === 'active'"
@@ -99,13 +103,18 @@
             </td>
             <td class="">
               <MoreMenu
-                @activateUser="activateUser(user.id)"
-                @deleteuser="deleteUser(user.id)"
+              :initText="user.userStatus === 'active' ? 'Deactivate User' : 'Activate User'"
+                @toggleUserStatus="toggleUserStatus(user)"
+                @deleteUser="deleteUser(user)"
+                @markPaid="markAsPaid(user)"
+                @ViewProfile="viewProfile(user)"
               />
             </td>
           </tr>
-          <tr v-if="openDetails">
-            <td colspan="5"><Act :activities="user.activities" /> </td>
+          <tr class="hidden" :class="{'block' : currentUser == user.id}">
+            <td class="act-add" colspan="5">
+              <Details :activities="user.activities" />
+            </td>
           </tr>
         </tbody>
       </table>
@@ -118,7 +127,7 @@
           <img src="../assets/images/Polygon 3.png" alt="" />
         </div>
         <span
-          >{{ pageNumber }}-{{ totalNumPerPage }} of
+          >{{ firstIndex }}-{{ lastIndex }} of
           {{ users ? users.length : "loading" }}</span
         >
         <img
@@ -146,10 +155,10 @@ import HFilter from "../components/HFilter.vue";
 import PayDues from "../components/PayDues.vue";
 import Search from "../components/Search.vue";
 import MoreMenu from "../components/MoreMenu.vue";
-import Act from '../components/Act.vue';
+import Details from "../components/Details.vue";
 export default {
   name: "Home",
-  components: { HFilter, Search, PayDues, Label, MoreMenu, Act },
+  components: { HFilter, Search, PayDues, Label, MoreMenu, Details },
   data() {
     return {
       type: "",
@@ -158,6 +167,10 @@ export default {
       totalNumPerPage: 10,
       pageNumber: 1,
       totalPages: null,
+      currentUser: "",
+      firstIndex: 1,
+      lastIndex: 10,
+      isSelected: null
     };
   },
 
@@ -171,12 +184,24 @@ export default {
         return this.filteredUsers;
       }
     },
+
+    pageNumber() {
+      if(this.pageNumber === 1) {
+        this.firstIndex = this.pageNumber
+      }
+      else this.firstIndex = (this.pageNumber + 10) - 1
+      this.lastIndex = this.pageNumber * 10
+    }
   },
 
   computed: {
     ...mapGetters({
       users: ["getUsers"],
     }),
+
+    displayedUsers() {
+      return this.filteredUsers.slice(this.firstIndex-1, this.lastIndex)
+    },
 
     filteredUsers() {
       if (this.searchWord) {
@@ -222,6 +247,10 @@ export default {
       }
       return "0.00";
     },
+
+    userLength() {
+      return this.users && this.users.length;
+    },
   },
 
   methods: {
@@ -229,36 +258,62 @@ export default {
       this.type = type;
     },
 
-    activateUser(id) {
-      this.$store.dispatch("activate", id);
+    setCurrentUser(user) {
+      this.currentUser = user.id
     },
 
-    deleteUser(id) {
-      this.$store.dispatch("removeUser", id);
+    toggleUserStatus(user) {
+      if(user.userStatus === 'active') {
+        this.$store.dispatch("deactivate", user.id);
+        alert(`${user.firstName} ${user.lastName} decativated`)
+      } else {
+        this.$store.dispatch("activate", user.id);
+        alert(`${user.firstName} ${user.lastName} activated`)
+      }
+    },
+
+    markAsPaid(user) {
+      if(user.paymentStatus === 'paid') {
+      alert(`${user.firstName} ${user.lastName} has already paid`)
+      } else {
+        this.$store.dispatch("markAsPaid", user.id);
+      alert(`${user.firstName} ${user.lastName} marked as paid`)
+      }
+    },
+
+    deleteUser(user) {
+      if(confirm(`Are you sure you want to delete ${user.firstName} ${user.lastName}`)) {
+        this.$store.dispatch("removeUser", user.id);
+        alert(`${user.firstName} ${user.lastName} deleted`)
+      }
+    },
+
+    viewProfile(user) {
+      
     },
 
     getTotalPages() {
-      if (this.users) {
-        this.totalPages = this.users.length / this.totalNumPerPage;
-      }
-      this.totalPages = 0;
+      this.totalPages = this.userLength / this.totalNumPerPage;
     },
 
     nextPage() {
-      if(this.totalPages > this.pageNumber) {
-        this.pageNumber++
+      if (this.totalPages > this.pageNumber) {
+        this.pageNumber++;
       }
     },
 
     previousPage() {
-      if(this.pageNumber <= this.totalPages && this.pageNumber !== 0) {
-        this.pageNumber--
-      }
-    }
+      if (this.pageNumber <= this.totalPages && this.pageNumber !== 1) {
+        this.pageNumber--;;
+      } 
+    },
   },
 
-  mounted() {
-    this.$store.dispatch("fetchUsers");
+  async beforeMount() {
+    await this.$store.dispatch("fetchUsers");
+  },
+
+  created() {
     this.getTotalPages();
   },
 };
@@ -285,5 +340,9 @@ export default {
   line-height: 15px;
   background: #f4f2ff;
   gap: 50px;
+}
+
+.act-add {
+  padding: 0px !important;
 }
 </style>

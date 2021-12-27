@@ -90,46 +90,46 @@ export default {
   },
 
   watch: {
-    allDef() {
-      if (this.allDef) {
-        return this.displayedArray;
-      }
-    },
-    firstName() {
-      if (this.firstName) {
-        return this.displayedArray.sort((a, b) => a.firstName - b.firstName);
-      }
-    },
-    lastName() {
-      if (this.lastName) {
-        return this.displayedArray.sort((a, b) => a.lastName - b.lastName);
-      }
-    },
-    lastLogin() {
-      if (this.lastLogin) {
-        return this.displayedArray.sort((a, b) => b.lastLogin - a.lastLogin);
-      }
-    },
-    dueDate() {
-      if (this.dueDate) {
-        return this.displayedArray.sort((a, b) => b.dueDate - a.dueDate);
-      }
-    },
-    allKind() {
-      if (this.allKind) {
-        return this.displayedArray;
-      }
-    },
-    active() {
-      if (this.active) {
-        return this.displayedArray.filter((el) => el.userStatus === "active");
-      }
-    },
-    inactive() {
-      if (this.inactive) {
-        return this.displayedArray.filter((el) => el.userStatus === "inactive");
-      }
-    },
+    // allDef() {
+    //   if (this.allDef) {
+    //     return this.displayedArray;
+    //   }
+    // },
+    // firstName() {
+    //   if (this.firstName) {
+    //     return this.displayedArray.sort((a, b) => a.firstName - b.firstName);
+    //   }
+    // },
+    // lastName() {
+    //   if (this.lastName) {
+    //     return this.displayedArray.sort((a, b) => a.lastName - b.lastName);
+    //   }
+    // },
+    // lastLogin() {
+    //   if (this.lastLogin) {
+    //     return this.displayedArray.sort((a, b) => b.lastLogin - a.lastLogin);
+    //   }
+    // },
+    // dueDate() {
+    //   if (this.dueDate) {
+    //     return this.displayedArray.sort((a, b) => b.dueDate - a.dueDate);
+    //   }
+    // },
+    // allKind() {
+    //   if (this.allKind) {
+    //     return this.displayedArray;
+    //   }
+    // },
+    // active() {
+    //   if (this.active) {
+    //     return this.displayedArray.filter((el) => el.userStatus === "active");
+    //   }
+    // },
+    // inactive() {
+    //   if (this.inactive) {
+    //     return this.displayedArray.filter((el) => el.userStatus === "inactive");
+    //   }
+    // },
   },
 
   computed: {},

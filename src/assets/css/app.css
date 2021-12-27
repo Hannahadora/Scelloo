@@ -96,8 +96,15 @@ th {
 }
 
 .table-head {
-  background-color: #F4F2FF; padding: 11px 20px;
-  text-transform: uppercase;
+  background-color: #F4F2FF;
+  display: flex;
+  align-items: centeer;
+  gap: 30px
+}
+
+.act-data {
+   padding: 15px 95px;
+   border-top: 1px solid #e7eaf4;
 }
 
 td {

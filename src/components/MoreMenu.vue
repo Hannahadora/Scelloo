@@ -15,13 +15,13 @@
         class="absolute -top-3 -right-3 cursor-pointer"
         src="../assets/images/Close.png"
         alt=""
-        @click="openMenu = false"
+        @click="closeMenu"
       />
       <ul>
-        <li class="menu-items-row text-pry-var">Edit</li>
-        <li class="menu-items-row text-pry-var">View Profile</li>
-        <li class="menu-items-row positive mb-2" @click="$emit('activateUser')">Activate User</li>
-        <li class="menu-items-row negative del-btn" @click="$emit('deleteUser')">Delete</li>
+        <li class="menu-items-row text-pry-var" @click="markPaid">Edit</li>
+        <li class="menu-items-row text-pry-var"  @click="viewProfile">View Profile</li>
+        <li class="menu-items-row positive mb-2" @click="toggleUserStatus">{{ initText }}</li>
+        <li class="menu-items-row negative del-btn" @click="deleteUser">Delete</li>
       </ul>
     </div>
   </div>
@@ -35,6 +35,35 @@ export default {
       openMenu: false,
     };
   },
+
+  props: ['initText'],
+
+  methods: {
+    closeMenu() {
+      this.openMenu = false
+    },
+
+    toggleUserStatus() {
+      this.$emit('toggleUserStatus')
+      this.openMenu = false
+    },
+
+    markPaid() {
+      this.$emit('markPaid')
+      this.openMenu = false
+    },
+
+    deleteUser() {
+      this.$emit('deleteUser')
+      this.openMenu = false
+    },
+
+    viewProfile() {
+      this.$emit('viewProfile')
+      this.openMenu = false
+    },
+    
+  }
 };
 </script>
 

@@ -329,6 +329,8 @@ export default {
     setCurrentUser(user) {
       if (this.currentUser === user.id) {
         this.currentUser = "";
+      } else {
+        this.currentUser = user.id
       }
     },
 

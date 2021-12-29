@@ -27,123 +27,126 @@
         </li>
       </ul>
 
-      <p>
+      <p class="lg:my-0 my-3">
         Total payable amount:
         <span class="font-bold">${{ totalPayableAmount }}</span> USD
       </p>
     </div>
 
     <div class="h-card mt-5 w-full">
-      <div class="px-5 py-4 flex items-center justify-between">
+      <div class="px-5 py-4 flex md:flex-row flex-col md:items-center items-end justify-between">
         <div class="flex items-center gap-5">
           <HFilter :displayedArray="filteredUsers" />
           <Search v-model="searchWord" />
         </div>
 
-        <PayDues />
+        <PayDues class="md:mt-0 mt-2"/>
       </div>
 
-      <table class="w-full">
-        <tr>
-          <th>
-            <input
-              class="chec"
-              type="checkbox"
-              @click="selectAll"
-              v-model="allSelected"
-            />
-          </th>
-          <th>name</th>
-          <th class="pr-48">user status</th>
-          <th>payment</th>
-          <th class="text-right">amount</th>
-          <th>
-            <div class="flex items-center justify-end">
-              <img src="../assets/images/More.png" alt="" />
-            </div>
-          </th>
-        </tr>
-
-        <tbody class="w-full" v-for="user in displayedUsers" :key="user.id">
-          <tr
-            class="cursor-pointer"
-            :class="{ 'active-table': currentUser === user.id }"
-          >
-            <td>
-              <div class="flex items-center justify-center gap-5">
-                <input
-                  class="chec"
-                  type="checkbox"
-                  :value="user.id"
-                  v-model="userIds"
-                  @click="setSelectedUser()"
-                />
-                <img
-                  src="../assets/images/Union.png"
-                  alt=""
-                  v-if="currentUser === user.id"
-                />
-                <img src="../assets/images/Down.png" alt="" v-else />
-              </div>
-            </td>
-            <td>
-              <span class="text-pry-var"
-                >{{ user.firstName }} {{ user.lastName }}</span
-              ><br />
-              <span class="text-pry">{{ user.email }}</span>
-            </td>
-            <td class="" :class="{ 'pr-16': currentUser === user.id }">
-              <div class="flex">
-                <Label
-                  :active="user.userStatus === 'active'"
-                  :inactive="user.userStatus === 'inactive'"
-                  >{{ user.userStatus }}</Label
-                >
-              </div>
-              <span class="text-pry-var text-xs"
-                >Last login: {{ user.lastLogin }}</span
-              >
-            </td>
-            <td>
-              <div class="flex">
-                <Label
-                  :paid="user.paymentStatus === 'paid'"
-                  :unpaid="user.paymentStatus === 'unpaid'"
-                  :overdue="user.paymentStatus === 'overdue'"
-                  >{{ user.paymentStatus }}</Label
-                >
-              </div>
-              <span class="text-pry-var text-xs"
-                >Paid on: {{ user.paidOn }}</span
-              >
-            </td>
-            <td class="text-right">
-              <span class="text-pry-var">${{ user.amountInCents * 0.01 }}</span
-              ><br />
-              <span class="text-xs">USD</span>
-            </td>
-            <td class="w-max">
-              <MoreMenu
-                :initText="
-                  user.userStatus === 'active'
-                    ? 'Deactivate User'
-                    : 'Activate User'
-                "
-                @openDetails="setCurrentUser(user)"
-                @toggleUserStatus="toggleUserStatus(user)"
-                @deleteUser="deleteUser(user)"
-                @markPaid="markAsPaid(user)"
-                @ViewProfile="viewProfile(user)"
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <tr>
+            <th>
+              <input
+                class="chec"
+                type="checkbox"
+                @click="selectAll"
+                v-model="allSelected"
               />
-            </td>
+            </th>
+            <th>name</th>
+            <th class="pr-48">user status</th>
+            <th>payment</th>
+            <th class="text-right">amount</th>
+            <th>
+              <div class="flex items-center justify-end">
+                <img src="../assets/images/More.png" alt="" />
+              </div>
+            </th>
           </tr>
-          <tr class="" v-if="currentUser === user.id">
-            <td class="act-add" colspan="6">
-              <Details :activities="user.activities" />
-            </td>
-          </tr>
-        </tbody>
-      </table>
+
+          <tbody class="w-full" v-for="user in displayedUsers" :key="user.id">
+            <tr
+              class="cursor-pointer"
+              :class="{ 'active-table': currentUser === user.id }"
+            >
+              <td>
+                <div class="flex items-center justify-center gap-5">
+                  <input
+                    class="chec"
+                    type="checkbox"
+                    :value="user.id"
+                    v-model="userIds"
+                    @click="setSelectedUser()"
+                  />
+                  <img
+                    src="../assets/images/Union.png"
+                    alt=""
+                    v-if="currentUser === user.id"
+                  />
+                  <img src="../assets/images/Down.png" alt="" v-else />
+                </div>
+              </td>
+              <td>
+                <span class="text-pry-var"
+                  >{{ user.firstName }} {{ user.lastName }}</span
+                ><br />
+                <span class="text-pry">{{ user.email }}</span>
+              </td>
+              <td class="" :class="{ 'pr-16': currentUser === user.id }">
+                <div class="flex">
+                  <Label
+                    :active="user.userStatus === 'active'"
+                    :inactive="user.userStatus === 'inactive'"
+                    >{{ user.userStatus }}</Label
+                  >
+                </div>
+                <span class="text-pry-var text-xs"
+                  >Last login: {{ user.lastLogin }}</span
+                >
+              </td>
+              <td>
+                <div class="flex">
+                  <Label
+                    :paid="user.paymentStatus === 'paid'"
+                    :unpaid="user.paymentStatus === 'unpaid'"
+                    :overdue="user.paymentStatus === 'overdue'"
+                    >{{ user.paymentStatus }}</Label
+                  >
+                </div>
+                <span class="text-pry-var text-xs"
+                  >Paid on: {{ user.paidOn }}</span
+                >
+              </td>
+              <td class="text-right">
+                <span class="text-pry-var"
+                  >${{ user.amountInCents * 0.01 }}</span
+                ><br />
+                <span class="text-xs">USD</span>
+              </td>
+              <td class="w-max">
+                <MoreMenu
+                  :initText="
+                    user.userStatus === 'active'
+                      ? 'Deactivate User'
+                      : 'Activate User'
+                  "
+                  @openDetails="setCurrentUser(user)"
+                  @toggleUserStatus="toggleUserStatus(user)"
+                  @deleteUser="deleteUser(user)"
+                  @markPaid="markAsPaid(user)"
+                  @ViewProfile="viewProfile(user)"
+                />
+              </td>
+            </tr>
+            <tr class="" v-if="currentUser === user.id">
+              <td class="act-add" colspan="6">
+                <Details :activities="user.activities" />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
       <div
         v-if="users"
         class="paginator flex items-center justify-end py-4 px-5"
@@ -300,7 +303,7 @@ export default {
           );
         const totalDues =
           dues && dues.map((el) => el.amountInCents).reduce((a, b) => a + b);
-        return totalDues * 0.01;
+        return (totalDues * 0.01).toFixed(2);
       }
       return "0.00";
     },
@@ -397,21 +400,6 @@ export default {
 </script>
 
 <style scoped>
-.nav-header {
-  width: 100%;
-  margin-top: 20px;
-  border-bottom: 1px solid #c6c2de;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.chec {
-  width: 20px;
-  height: 20px;
-}
-
 .paginator {
   font-weight: 600;
   font-size: 12px;

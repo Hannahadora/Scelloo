@@ -40,7 +40,7 @@
           <Search v-model="searchWord" />
         </div>
 
-        <PayDues class="md:mt-0 mt-2"/>
+        <PayDues @markAllAsPaid="markAllAsPaid" class="md:mt-0 mt-2"/>
       </div>
 
       <div class="overflow-x-auto">
@@ -67,7 +67,7 @@
 
           <tbody class="w-full" v-for="user in displayedUsers" :key="user.id">
             <tr
-              class="cursor-pointer"
+              class=""
               :class="{ 'active-table': currentUser === user.id }"
             >
               <td>
@@ -77,7 +77,7 @@
                     type="checkbox"
                     :value="user.id"
                     v-model="userIds"
-                    @click="setSelectedUser()"
+                    @click="select(user)"
                   />
                   <img
                     src="../assets/images/Union.png"
@@ -198,9 +198,8 @@ export default {
       currentUser: "",
       firstIndex: 1,
       lastIndex: 10,
-      isSelected: null,
-      userIds: "",
-      allSelected: "",
+      userIds: [],
+      allSelected: false,
     };
   },
 
@@ -227,6 +226,15 @@ export default {
         this.totalNumPerPage = this.filteredUsers.length;
       } else this.totalNumPerPage = 10;
       this.totalPages = this.filteredUsers.length / this.totalNumPerPage;
+    },
+
+    allSelected() {
+      if (this.allSelected === true) {
+        this.users.forEach(user => this.userIds.push(user.id))
+      }
+      else if(this.allSelected == true && this.userIds.length < 20) {
+        this.allSelected = false
+      }
     },
   },
 
@@ -321,21 +329,23 @@ export default {
     setCurrentUser(user) {
       if (this.currentUser === user.id) {
         this.currentUser = "";
-      } else this.currentUser = user.id;
-    },
-
-    selectAll() {
-      if (this.allSelected) {
-        this.users.forEach((user) => {
-          this.userIds.push(user.id.toString());
-        });
-      } else {
-        this.userIds = [];
       }
     },
 
-    setSelectedUser() {
-      this.allSelected = false;
+    selectAll() {
+      if(this.userIds.length < 20) {
+        this.allSelected = true
+      }
+      if(this.userIds.length = 20) {
+        this.userIds = []
+      }
+    },
+
+    select(user) {
+      if (this.userIds.includes(user.id)) {
+        this.userIds.pop(user.id)
+        this.allSelected = false
+      }
     },
 
     toggleUserStatus(user) {
@@ -368,7 +378,9 @@ export default {
       }
     },
 
-    viewProfile(user) {},
+    viewProfile(user) {
+      this.currentUser = user.id
+    },
 
     nextPage() {
       if (this.totalPages > this.pageNumber) {

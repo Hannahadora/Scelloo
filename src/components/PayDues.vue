@@ -1,7 +1,7 @@
 <template>
   <div>
-    <button class="pd">
-        Pay Dues
+    <button @click="$emit('markAllAsPaid')" class="pd">
+        Pay Dues 
     </button>
   </div>
 </template>

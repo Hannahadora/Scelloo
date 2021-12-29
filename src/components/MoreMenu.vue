@@ -1,13 +1,13 @@
 <template>
   <div class="relative" @blur="openMenu = false">
     <div class="flex items-center justify-between">
-      <span class="view-more-btn">View more</span>
+      <span class="view-more-btn" @click="$emit('openDetails')">View more</span>
       <img
         v-if="!openMenu"
         class="menu-icon"
         src="../assets/images/More.png"
         alt=""
-        @click="openMenu = true"
+        @click.self="openMenu = true"
       />
     </div>
     <div v-if="openMenu" class="menu-card absolute right-1 top-0">
@@ -92,6 +92,7 @@ export default {
 .view-more-btn {
   font-size: 12px !important;
   padding: 5px;
+  cursor: pointer;
 }
 
 .view-more-btn:hover {

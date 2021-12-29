@@ -59,6 +59,11 @@ body {
   background-color: #d30000;
 }
 
+.active-table {
+  background-color: #F4F2FF;  
+  border-top: 1px solid #D9D5EC;
+}
+
 h1 {
   font-size: 14px !important;
   font-weight: 700 !important;
@@ -98,13 +103,14 @@ th {
 .table-head {
   background-color: #F4F2FF;
   display: flex;
-  align-items: centeer;
-  gap: 30px
+  align-items: start;
+  gap: 30px;
+  padding:0px 80px;
+  border-top: 1px solid #D9D5EC;
 }
 
 .act-data {
-   padding: 15px 95px;
-   border-top: 1px solid #e7eaf4;
+   padding: 13px 0px;
 }
 
 td {
@@ -130,4 +136,26 @@ tr {
 .h-link {
   font-size: 12px;
   line-height: 15px;
+}
+
+
+@media screen and (max-width: 1024px) {
+  body {
+    padding: 24px;
+  }
+  
+}
+
+@media screen and (max-width: 768px) {
+  body {
+    padding: 24px;
+  }
+  
+}
+
+@media screen and (max-width: 500px) {
+  body {
+    padding: 24px;
+  }
+  
 }

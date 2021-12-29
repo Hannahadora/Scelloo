@@ -45,25 +45,46 @@
 
       <table class="w-full">
         <tr>
-          <th><input class="chec" type="checkbox" /></th>
+          <th>
+            <input
+              class="chec"
+              type="checkbox"
+              @click="selectAll"
+              v-model="allSelected"
+            />
+          </th>
           <th>name</th>
           <th class="pr-48">user status</th>
           <th>payment</th>
           <th class="text-right">amount</th>
-          <th class="flex items-center justify-end">
-            <img src="../assets/images/More.png" alt="" />
+          <th>
+            <div class="flex items-center justify-end">
+              <img src="../assets/images/More.png" alt="" />
+            </div>
           </th>
         </tr>
 
-        <tbody
-          class="w-full"
-          v-for="user in displayedUsers"
-          :key="user.id"
-        >
-          <tr class="cursor-pointer" @click="setCurrentUser(user)">
-            <td class="flex items-center justify-center gap-5">
-              <input class="chec" type="checkbox" :id="user.id" v-model="isSelected" />
-              <img src="../assets/images/Down.png" alt="" />
+        <tbody class="w-full" v-for="user in displayedUsers" :key="user.id">
+          <tr
+            class="cursor-pointer"
+            :class="{ 'active-table': currentUser === user.id }"
+          >
+            <td>
+              <div class="flex items-center justify-center gap-5">
+                <input
+                  class="chec"
+                  type="checkbox"
+                  :value="user.id"
+                  v-model="userIds"
+                  @click="setSelectedUser()"
+                />
+                <img
+                  src="../assets/images/Union.png"
+                  alt=""
+                  v-if="currentUser === user.id"
+                />
+                <img src="../assets/images/Down.png" alt="" v-else />
+              </div>
             </td>
             <td>
               <span class="text-pry-var"
@@ -71,7 +92,7 @@
               ><br />
               <span class="text-pry">{{ user.email }}</span>
             </td>
-            <td class="pr-48">
+            <td class="" :class="{ 'pr-16': currentUser === user.id }">
               <div class="flex">
                 <Label
                   :active="user.userStatus === 'active'"
@@ -101,9 +122,14 @@
               ><br />
               <span class="text-xs">USD</span>
             </td>
-            <td class="">
+            <td class="w-max">
               <MoreMenu
-              :initText="user.userStatus === 'active' ? 'Deactivate User' : 'Activate User'"
+                :initText="
+                  user.userStatus === 'active'
+                    ? 'Deactivate User'
+                    : 'Activate User'
+                "
+                @openDetails="setCurrentUser(user)"
                 @toggleUserStatus="toggleUserStatus(user)"
                 @deleteUser="deleteUser(user)"
                 @markPaid="markAsPaid(user)"
@@ -111,8 +137,8 @@
               />
             </td>
           </tr>
-          <tr class="hidden" :class="{'block' : currentUser == user.id}">
-            <td class="act-add" colspan="5">
+          <tr class="" v-if="currentUser === user.id">
+            <td class="act-add" colspan="6">
               <Details :activities="user.activities" />
             </td>
           </tr>
@@ -128,7 +154,7 @@
         </div>
         <span
           >{{ firstIndex }}-{{ lastIndex }} of
-          {{ users ? users.length : "loading" }}</span
+          {{ filteredUsers ? filteredUsers.length : "loading" }}</span
         >
         <img
           class="cursor-pointer"
@@ -163,14 +189,15 @@ export default {
     return {
       type: "",
       searchWord: "",
-      openDetails: false,
-      totalNumPerPage: 10,
+      totalNumPerPage: "",
       pageNumber: 1,
       totalPages: null,
       currentUser: "",
       firstIndex: 1,
       lastIndex: 10,
-      isSelected: null
+      isSelected: null,
+      userIds: "",
+      allSelected: "",
     };
   },
 
@@ -186,12 +213,18 @@ export default {
     },
 
     pageNumber() {
-      if(this.pageNumber === 1) {
-        this.firstIndex = this.pageNumber
-      }
-      else this.firstIndex = (this.pageNumber + 10) - 1
-      this.lastIndex = this.pageNumber * 10
-    }
+      if (this.pageNumber === 1) {
+        this.firstIndex = this.pageNumber;
+      } else this.firstIndex = this.pageNumber + 10 - 1;
+      this.lastIndex = this.pageNumber * 10;
+    },
+
+    filteredUsers() {
+      if (this.filteredUsers.length <= 9) {
+        this.totalNumPerPage = this.filteredUsers.length;
+      } else this.totalNumPerPage = 10;
+      this.totalPages = this.filteredUsers.length / this.totalNumPerPage;
+    },
   },
 
   computed: {
@@ -200,7 +233,7 @@ export default {
     }),
 
     displayedUsers() {
-      return this.filteredUsers.slice(this.firstIndex-1, this.lastIndex)
+      return this.filteredUsers.slice(this.firstIndex - 1, this.lastIndex);
     },
 
     filteredUsers() {
@@ -214,6 +247,30 @@ export default {
               user.email.toLowerCase().includes(this.searchWord)
           )
         );
+      }
+      if (this.allDef) {
+        return this.users;
+      }
+      if (this.firstName) {
+        return this.users.sort((a, b) => a.firstName - b.firstName);
+      }
+      if (this.lastName) {
+        return this.users.sort((a, b) => a.lastName - b.lastName);
+      }
+      if (this.lastLogin) {
+        return this.users.sort((a, b) => b.lastLogin - a.lastLogin);
+      }
+      if (this.dueDate) {
+        return this.users.sort((a, b) => b.dueDate - a.dueDate);
+      }
+      if (this.allKind) {
+        return this.users;
+      }
+      if (this.active) {
+        return this.users.filter((el) => el.userStatus === "active");
+      }
+      if (this.inactive) {
+        return this.users.filter((el) => el.userStatus === "inactive");
       }
       return (
         this.users &&
@@ -249,7 +306,7 @@ export default {
     },
 
     userLength() {
-      return this.users && this.users.length;
+      return this.filteredUsers && this.filteredUsers.length;
     },
   },
 
@@ -259,42 +316,56 @@ export default {
     },
 
     setCurrentUser(user) {
-      this.currentUser = user.id
+      if (this.currentUser === user.id) {
+        this.currentUser = "";
+      } else this.currentUser = user.id;
+    },
+
+    selectAll() {
+      if (this.allSelected) {
+        this.users.forEach((user) => {
+          this.userIds.push(user.id.toString());
+        });
+      } else {
+        this.userIds = [];
+      }
+    },
+
+    setSelectedUser() {
+      this.allSelected = false;
     },
 
     toggleUserStatus(user) {
-      if(user.userStatus === 'active') {
+      if (user.userStatus === "active") {
         this.$store.dispatch("deactivate", user.id);
-        alert(`${user.firstName} ${user.lastName} decativated`)
+        alert(`${user.firstName} ${user.lastName} decativated`);
       } else {
         this.$store.dispatch("activate", user.id);
-        alert(`${user.firstName} ${user.lastName} activated`)
+        alert(`${user.firstName} ${user.lastName} activated`);
       }
     },
 
     markAsPaid(user) {
-      if(user.paymentStatus === 'paid') {
-      alert(`${user.firstName} ${user.lastName} has already paid`)
+      if (user.paymentStatus === "paid") {
+        alert(`${user.firstName} ${user.lastName} has already paid`);
       } else {
         this.$store.dispatch("markAsPaid", user.id);
-      alert(`${user.firstName} ${user.lastName} marked as paid`)
+        alert(`${user.firstName} ${user.lastName} marked as paid`);
       }
     },
 
     deleteUser(user) {
-      if(confirm(`Are you sure you want to delete ${user.firstName} ${user.lastName}`)) {
+      if (
+        confirm(
+          `Are you sure you want to delete ${user.firstName} ${user.lastName}`
+        )
+      ) {
         this.$store.dispatch("removeUser", user.id);
-        alert(`${user.firstName} ${user.lastName} deleted`)
+        alert(`${user.firstName} ${user.lastName} deleted`);
       }
     },
 
-    viewProfile(user) {
-      
-    },
-
-    getTotalPages() {
-      this.totalPages = this.userLength / this.totalNumPerPage;
-    },
+    viewProfile(user) {},
 
     nextPage() {
       if (this.totalPages > this.pageNumber) {
@@ -304,8 +375,16 @@ export default {
 
     previousPage() {
       if (this.pageNumber <= this.totalPages && this.pageNumber !== 1) {
-        this.pageNumber--;;
-      } 
+        this.pageNumber--;
+      }
+    },
+
+    markAllAsPaid() {
+      this.users.find((el) => {
+        if (this.userIds.includes(el.id)) {
+          this.$store.dispatch("markAsPaid", el.id);
+        }
+      });
     },
   },
 
@@ -313,14 +392,13 @@ export default {
     await this.$store.dispatch("fetchUsers");
   },
 
-  created() {
-    this.getTotalPages();
-  },
+  created() {},
 };
 </script>
 
 <style scoped>
 .nav-header {
+  width: 100%;
   margin-top: 20px;
   border-bottom: 1px solid #c6c2de;
   display: flex;

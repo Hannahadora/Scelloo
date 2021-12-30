@@ -34,13 +34,24 @@
     </div>
 
     <div class="h-card mt-5 w-full">
-      <div class="px-5 py-4 flex md:flex-row flex-col md:items-center items-end justify-between">
+      <div
+        class="
+          px-5
+          py-4
+          flex
+          md:flex-row
+          flex-col
+          md:items-center
+          items-end
+          justify-between
+        "
+      >
         <div class="flex items-center gap-5">
-          <HFilter :displayedArray="filteredUsers" />
+          <HFilter />
           <Search v-model="searchWord" />
         </div>
 
-        <PayDues @markAllAsPaid="markAllAsPaid" class="md:mt-0 mt-2"/>
+        <PayDues @markAllAsPaid="markAllAsPaid" class="md:mt-0 mt-2" />
       </div>
 
       <div class="overflow-x-auto">
@@ -66,12 +77,9 @@
           </tr>
 
           <tbody class="w-full" v-for="user in displayedUsers" :key="user.id">
-            <tr
-              class=""
-              :class="{ 'active-table': currentUser === user.id }"
-            >
+            <tr class="" :class="{ 'active-table': currentUser === user.id }">
               <td>
-                <div class="flex items-center justify-center gap-5">
+                <div class="flex items-center gap-5">
                   <input
                     class="chec"
                     type="checkbox"
@@ -94,7 +102,7 @@
                 <span class="text-pry">{{ user.email }}</span>
               </td>
               <td class="" :class="{ 'pr-16': currentUser === user.id }">
-                <div class="flex">
+                <div class="flex mb-1">
                   <Label
                     :active="user.userStatus === 'active'"
                     :inactive="user.userStatus === 'inactive'"
@@ -102,11 +110,11 @@
                   >
                 </div>
                 <span class="text-pry-var text-xs"
-                  >Last login: {{ user.lastLogin }}</span
+                  >Last login: {{ convertDate(user.lastLogin) }}</span
                 >
               </td>
               <td>
-                <div class="flex">
+                <div class="flex mb-1">
                   <Label
                     :paid="user.paymentStatus === 'paid'"
                     :unpaid="user.paymentStatus === 'unpaid'"
@@ -114,9 +122,11 @@
                     >{{ user.paymentStatus }}</Label
                   >
                 </div>
-                <span class="text-pry-var text-xs"
-                  >Paid on: {{ user.paidOn }}</span
-                >
+                <div class="text-pry-var text-xs">
+                  Paid on:
+                  <span v-if="user.paidOn">{{ convertDate(user.paidOn) }}</span>
+                  <span v-else>Nil</span>
+                </div>
               </td>
               <td class="text-right">
                 <span class="text-pry-var"
@@ -149,7 +159,15 @@
       </div>
       <div
         v-if="users"
-        class="paginator flex items-center justify-end py-4 px-5"
+        class="
+          paginator
+          flex
+          items-center
+          lg:justify-end
+          justif-between
+          py-4
+          px-5
+        "
       >
         <div class="flex items-center gap-3">
           <span class="">Rows per page: {{ totalNumPerPage }}</span>
@@ -185,6 +203,7 @@ import PayDues from "../components/PayDues.vue";
 import Search from "../components/Search.vue";
 import MoreMenu from "../components/MoreMenu.vue";
 import Details from "../components/Details.vue";
+import moment from "moment";
 export default {
   name: "Home",
   components: { HFilter, Search, PayDues, Label, MoreMenu, Details },
@@ -200,6 +219,8 @@ export default {
       lastIndex: 10,
       userIds: [],
       allSelected: false,
+      sortOptions: "allDef",
+      userOptions: "allUsers",
     };
   },
 
@@ -224,16 +245,25 @@ export default {
     filteredUsers() {
       if (this.filteredUsers.length <= 9) {
         this.totalNumPerPage = this.filteredUsers.length;
-      } else this.totalNumPerPage = 10;
-      this.totalPages = this.filteredUsers.length / this.totalNumPerPage;
+        this.lastIndex = this.filteredUsers.length;
+        this.totalPages = 1;
+      } else if (
+        this.filteredUsers.length > 10 &&
+        this.filteredUsers.length < 10 * this.totalPages
+      ) {
+        this.lastIndex = this.filteredUsers.length;
+      } else {
+        this.totalNumPerPage = 10;
+        this.totalPages = this.filteredUsers.length / this.totalNumPerPage;
+        this.lastIndex = this.filteredUsers.length;
+      }
     },
 
     allSelected() {
       if (this.allSelected === true) {
-        this.users.forEach(user => this.userIds.push(user.id))
-      }
-      else if(this.allSelected == true && this.userIds.length < 20) {
-        this.allSelected = false
+        this.users.forEach((user) => this.userIds.push(user.id));
+      } else if (this.allSelected == true && this.userIds.length < 20) {
+        this.allSelected = false;
       }
     },
   },
@@ -274,7 +304,7 @@ export default {
       if (this.dueDate) {
         return this.users.sort((a, b) => b.dueDate - a.dueDate);
       }
-      if (this.allKind) {
+      if (this.allUsers) {
         return this.users;
       }
       if (this.active) {
@@ -330,23 +360,23 @@ export default {
       if (this.currentUser === user.id) {
         this.currentUser = "";
       } else {
-        this.currentUser = user.id
+        this.currentUser = user.id;
       }
     },
 
     selectAll() {
-      if(this.userIds.length < 20) {
-        this.allSelected = true
+      if (this.userIds.length < 20) {
+        this.allSelected = true;
       }
-      if(this.userIds.length = 20) {
-        this.userIds = []
+      if ((this.userIds.length = 20)) {
+        this.userIds = [];
       }
     },
 
     select(user) {
       if (this.userIds.includes(user.id)) {
-        this.userIds.pop(user.id)
-        this.allSelected = false
+        this.userIds.pop(user.id);
+        this.allSelected = false;
       }
     },
 
@@ -381,7 +411,7 @@ export default {
     },
 
     viewProfile(user) {
-      this.currentUser = user.id
+      this.currentUser = user.id;
     },
 
     nextPage() {
@@ -397,11 +427,18 @@ export default {
     },
 
     markAllAsPaid() {
-      this.users.find((el) => {
-        if (this.userIds.includes(el.id)) {
-          this.$store.dispatch("markAsPaid", el.id);
-        }
-      });
+      if (this.userIds.length > 0) {
+        this.users.find((el) => {
+          if (this.userIds.includes(el.id)) {
+            this.$store.dispatch("markAsPaid", el.id);
+            alert(`${el.firstName} ${el.lastName} marked as paid`);
+          }
+        });
+      } else alert("No user has been selected");
+    },
+
+    convertDate(x) {
+      return moment(x).format("DD/MMM/YYYY");
     },
   },
 

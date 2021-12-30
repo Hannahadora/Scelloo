@@ -6,6 +6,10 @@ import './assets/css/app.css'
 
 Vue.config.productionTip = false
 
+import vClickOutside from 'v-click-outside'
+ 
+Vue.use(vClickOutside)
+
 new Vue({
   router,
   store,

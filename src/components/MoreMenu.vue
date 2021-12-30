@@ -1,5 +1,5 @@
 <template>
-  <div class="relative" @blur="openMenu = false">
+  <div class="relative" v-click-outside="closeMenu">
     <div class="flex items-center justify-between">
       <span class="view-more-btn" @click="$emit('openDetails')">View more</span>
       <img
@@ -33,6 +33,13 @@ export default {
   data() {
     return {
       openMenu: false,
+      vcoConfig: {
+        handler: this.handler,
+        middleware: this.middleware,
+        events: ['dblclick', 'click'],
+        isActive: true,
+        detectIFrame: true
+      }
     };
   },
 

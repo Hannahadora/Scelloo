@@ -8,7 +8,7 @@ body {
   font-size: 14px;
   font-weight: 500;
   line-height: 17px;
-  font-family: "Inter", sans-serif;
+  font-family: "Inter", sans-serif !important;
   letter-spacing: 0.05em;
 }
 

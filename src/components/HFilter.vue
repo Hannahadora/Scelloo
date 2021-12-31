@@ -15,7 +15,7 @@
       </div>
       <div class="mt-8_2">
         <span class="filter-title">users:</span>
-         <BaseRadioButton :options="options2" v-model="userOptions" />
+        <BaseRadioButton :options="options2" v-model="userOptions" />
       </div>
     </div>
   </div>
@@ -23,6 +23,7 @@
 
 
 <script>
+import { mapGetters } from "vuex";
 import BaseRadioButton from "./BaseRadioButton.vue";
 export default {
   components: { BaseRadioButton },
@@ -42,16 +43,58 @@ export default {
         { value: "active", name: "active" },
         { value: "inactive", name: "inactive" },
       ],
+      sortOptions: "firstName",
+      userOptions: "allUsers",
     };
   },
 
-  watch: {},
+  props: {},
 
-  props: {
-   
+  watch: {
+    sortOptions() {
+      if (this.sortOptions === "allDef") {
+        return this.users;
+      }
+      if (this.sortOptions === "firstName") {
+        return this.users.sort((a, b) =>
+          a.firstName.localeCompare(b.firstName)
+        );
+      }
+      if (this.sortOptions === "lastName") {
+        return this.users.sort((a, b) => a.lastName.localeCompare(b.lastName));
+      }
+      if (this.sortOptions === "lastLogin") {
+        return this.users.sort((a, b) =>
+          b.lastLogin.localeCompare(a.lastLogin)
+        );
+      }
+      if (this.sortOptions === "dueDate") {
+        return this.users.sort((a, b) => b.dueDate.localeCompare(a.dueDate));
+      }
+    },
+
+    userOptions() {
+      if (this.userOptions === "allUsers") {
+        return this.users;
+      }
+      if (this.userOptions === "active") {
+        return this.users.filter((user) => {
+          return user.userStatus === "active";
+        });
+      }
+      if (this.userOptions === "inactive") {
+        return this.users.filter((user) => {
+          return user.userStatus === "inactive";
+        });
+      }
+    },
   },
 
-  computed: {},
+  computed: {
+    ...mapGetters({
+      users: ["getUsers"],
+    }),
+  },
 };
 </script>
 

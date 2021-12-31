@@ -9,11 +9,12 @@
         {{ option.name }}
       </label>
       <input
+        v-bind="$attrs"
         type="radio"
         name="sort"
         :value="option.value"
         :id="option.value"
-        @change="$parent.$emit('input', option.value)"
+        @change="$emit('input', option.value)"
       />
     </div>
   </div>
@@ -22,6 +23,7 @@
 <script>
 export default {
   name: "BaseRadioButton",
+  inheritAttrs: false,
   props: {
     options: {
       required: true,

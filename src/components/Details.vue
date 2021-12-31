@@ -18,7 +18,7 @@
         :key="index"
       >
         <span class="act-data w-24 flex items-center justify-center">{{
-          activity.date
+          convertDate(activity.date)
         }}</span>
         <span class="act-data w-2/6">{{ activity.userActivity }}</span>
         <span class="act-data w-2/4">{{ activity.details }}</span>
@@ -36,8 +36,15 @@
 </template>
 
 <script>
+import moment from 'moment'
 export default {
+  name: "Details",
   props: ["activities"],
+  methods: {
+    convertDate(x) {
+      return moment(x).format("DD/MMM/YYYY");
+    },
+  },
 };
 </script>
 

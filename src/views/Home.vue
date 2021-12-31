@@ -219,8 +219,6 @@ export default {
       lastIndex: 10,
       userIds: [],
       allSelected: false,
-      sortOptions: "allDef",
-      userOptions: "allUsers",
     };
   },
 
@@ -288,30 +286,6 @@ export default {
               user.email.toLowerCase().includes(this.searchWord)
           )
         );
-      }
-      if (this.allDef) {
-        return this.users;
-      }
-      if (this.firstName) {
-        return this.users.sort((a, b) => a.firstName - b.firstName);
-      }
-      if (this.lastName) {
-        return this.users.sort((a, b) => a.lastName - b.lastName);
-      }
-      if (this.lastLogin) {
-        return this.users.sort((a, b) => b.lastLogin - a.lastLogin);
-      }
-      if (this.dueDate) {
-        return this.users.sort((a, b) => b.dueDate - a.dueDate);
-      }
-      if (this.allUsers) {
-        return this.users;
-      }
-      if (this.active) {
-        return this.users.filter((el) => el.userStatus === "active");
-      }
-      if (this.inactive) {
-        return this.users.filter((el) => el.userStatus === "inactive");
       }
       return (
         this.users &&

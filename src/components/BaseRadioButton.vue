@@ -11,7 +11,7 @@
       <input
         v-bind="$attrs"
         type="radio"
-        name="sort"
+        :name="options"
         :value="option.value"
         :id="option.value"
         @change="$emit('input', option.value)"

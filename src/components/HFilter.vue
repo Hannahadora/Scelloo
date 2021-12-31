@@ -11,7 +11,7 @@
     <div class="filter-card absolute mt-2" v-if="openFilter">
       <div class="filter-sect1">
         <span class="filter-title">sort by:</span>
-        <BaseRadioButton :options="options1" v-model="sortOptions" />
+        <BaseRadioButton :options="options1" v-model="sortOptions" @input="input" />
       </div>
       <div class="mt-8_2">
         <span class="filter-title">users:</span>
@@ -95,6 +95,12 @@ export default {
       users: ["getUsers"],
     }),
   },
+
+  methods: {
+    input() {
+      
+    }
+  }
 };
 </script>
 

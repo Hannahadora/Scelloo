@@ -110,7 +110,7 @@
                   >
                 </div>
                 <span class="text-pry-var text-xs"
-                  >Last login: {{ convertDate(user.lastLogin) }}</span
+                  >Last login: <span class="uppercase">{{ convertDate(user.lastLogin) }}</span></span
                 >
               </td>
               <td>
@@ -124,7 +124,7 @@
                 </div>
                 <div class="text-pry-var text-xs">
                   Paid on:
-                  <span v-if="user.paidOn">{{ convertDate(user.paidOn) }}</span>
+                  <span class="uppercase" v-if="user.paidOn">{{ convertDate(user.paidOn) }}</span>
                   <span v-else>Nil</span>
                 </div>
               </td>
@@ -283,7 +283,9 @@ export default {
             (user) =>
               user.firstName.toLowerCase().includes(this.searchWord) ||
               user.lastName.toLowerCase().includes(this.searchWord) ||
-              user.email.toLowerCase().includes(this.searchWord)
+              user.email.toLowerCase().includes(this.searchWord) ||
+              user.lastLogin.includes(this.searchWord) ||
+              user.paidOn.includes(this.searchWord)
           )
         );
       }

@@ -1,20 +1,17 @@
 <template>
   <div>
-    <div
-      class="filter-row mt-8_2"
-      v-for="option in options"
-      :key="option.value"
-    >
-      <label :for="option" class="capitalize">
-        {{ option.name }}
+    <div class="filter-row mt-8_2">
+      <label class="capitalize">
+        {{ label }}
       </label>
       <input
         v-bind="$attrs"
         type="radio"
-        :name="options"
-        :value="option.value"
-        :id="option.value"
-        @change="$emit('input', option.value)"
+        :checked="checked"
+        :name="name"
+        :value="value"
+        :id="id"
+        @input="onInput"
       />
     </div>
   </div>
@@ -24,10 +21,39 @@
 export default {
   name: "BaseRadioButton",
   inheritAttrs: false,
+  model: {
+    prop: "modelValue",
+    event: "update",
+  },
   props: {
-    options: {
-      required: true,
-      type: Array,
+    value: {
+      type: String,
+    },
+    label: {
+      type: String,
+    },
+    name: {
+      type: String,
+    },
+    id: {
+      type: String,
+    },
+    modelValue: {
+      default: "",
+    }
+
+  },
+  data() {
+    return {};
+  },
+  computed: {
+    checked() {
+      return this.modelValue === this.value;
+    },
+  },
+  methods: {
+    onInput(event) {
+      this.$emit("update", event.target.value);
     },
   },
 };

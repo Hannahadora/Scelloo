@@ -17,7 +17,7 @@
         v-for="(activity, index) in activities"
         :key="index"
       >
-        <span class="act-data w-24 flex items-center justify-center">{{
+        <span class="act-data uppercase w-24 flex items-center justify-center">{{
           convertDate(activity.date)
         }}</span>
         <span class="act-data w-2/6">{{ activity.userActivity }}</span>

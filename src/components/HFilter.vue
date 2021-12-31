@@ -8,14 +8,30 @@
       <img src="../assets/images/Vector.png" alt="" />
       <span>Filter</span>
     </div>
-    <div class="filter-card absolute mt-2" v-if="openFilter">
+    <div
+      class="filter-card absolute mt-2"
+      v-if="openFilter"
+      v-click-outside="closeFilter"
+    >
       <div class="filter-sect1">
         <span class="filter-title">sort by:</span>
-        <BaseRadioButton :options="options1" v-model="sortOptions" @input="input" />
+        <BaseRadioButton v-for="option in options1" :key="option.value"
+          :label="option.name"
+          name="options1"
+          :id="option.value"
+          :value="option.value"
+          v-model="sortOptions"
+        />
       </div>
       <div class="mt-8_2">
         <span class="filter-title">users:</span>
-        <BaseRadioButton :options="options2" v-model="userOptions" />
+        <BaseRadioButton v-for="option in options2" :key="option.value"
+          :label="option.name"
+          name="options2"
+          :id="option.value"
+          :value="option.value"
+          v-model="userOptions"
+        />
       </div>
     </div>
   </div>
@@ -31,6 +47,13 @@ export default {
   data() {
     return {
       openFilter: false,
+      vcoConfig: {
+        handler: this.handler,
+        middleware: this.middleware,
+        events: ["dblclick", "click"],
+        isActive: true,
+        detectIFrame: true,
+      },
       options1: [
         { value: "allDef", name: "default" },
         { value: "firstName", name: "firstName" },
@@ -43,7 +66,7 @@ export default {
         { value: "active", name: "active" },
         { value: "inactive", name: "inactive" },
       ],
-      sortOptions: "firstName",
+      sortOptions: "allDef",
       userOptions: "allUsers",
     };
   },
@@ -65,11 +88,13 @@ export default {
       }
       if (this.sortOptions === "lastLogin") {
         return this.users.sort((a, b) =>
-          b.lastLogin.localeCompare(a.lastLogin)
+          new Date(b.lastLogin) - new Date(a.lastLogin)
         );
       }
       if (this.sortOptions === "dueDate") {
-        return this.users.sort((a, b) => b.dueDate.localeCompare(a.dueDate));
+        return this.users.sort((a, b) =>
+          new Date(b.dueDate) - new Date(a.dueDate)
+        );
       }
     },
 
@@ -97,10 +122,10 @@ export default {
   },
 
   methods: {
-    input() {
-      
-    }
-  }
+    closeFilter() {
+      this.openFilter = false;
+    },
+  },
 };
 </script>
 

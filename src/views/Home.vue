@@ -284,8 +284,7 @@ export default {
               user.firstName.toLowerCase().includes(this.searchWord) ||
               user.lastName.toLowerCase().includes(this.searchWord) ||
               user.email.toLowerCase().includes(this.searchWord) ||
-              user.lastLogin.includes(this.searchWord) ||
-              user.paidOn.includes(this.searchWord)
+              user.lastLogin.includes(this.searchWord)
           )
         );
       }

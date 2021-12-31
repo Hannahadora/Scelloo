@@ -1,5 +1,5 @@
 <template>
-  <div class="relative">
+  <div class="relative" v-click-outside="closeFilter">
     <div
       class="filter-btn cursor-pointer"
       :class="{ 'active-filter-btn': openFilter }"
@@ -8,14 +8,12 @@
       <img src="../assets/images/Vector.png" alt="" />
       <span>Filter</span>
     </div>
-    <div
-      class="filter-card absolute mt-2"
-      v-if="openFilter"
-      v-click-outside="closeFilter"
-    >
+    <div class="filter-card absolute mt-2" v-if="openFilter">
       <div class="filter-sect1">
         <span class="filter-title">sort by:</span>
-        <BaseRadioButton v-for="option in options1" :key="option.value"
+        <BaseRadioButton
+          v-for="option in options1"
+          :key="option.value"
           :label="option.name"
           name="options1"
           :id="option.value"
@@ -25,7 +23,9 @@
       </div>
       <div class="mt-8_2">
         <span class="filter-title">users:</span>
-        <BaseRadioButton v-for="option in options2" :key="option.value"
+        <BaseRadioButton
+          v-for="option in options2"
+          :key="option.value"
           :label="option.name"
           name="options2"
           :id="option.value"
@@ -87,13 +87,13 @@ export default {
         return this.users.sort((a, b) => a.lastName.localeCompare(b.lastName));
       }
       if (this.sortOptions === "lastLogin") {
-        return this.users.sort((a, b) =>
-          new Date(b.lastLogin) - new Date(a.lastLogin)
+        return this.users.sort(
+          (a, b) => new Date(b.lastLogin) - new Date(a.lastLogin)
         );
       }
       if (this.sortOptions === "dueDate") {
-        return this.users.sort((a, b) =>
-          new Date(b.dueDate) - new Date(a.dueDate)
+        return this.users.sort(
+          (a, b) => new Date(b.paidOn) - new Date(a.paidOn)
         );
       }
     },

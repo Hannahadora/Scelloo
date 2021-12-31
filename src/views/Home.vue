@@ -247,7 +247,7 @@ export default {
         this.totalPages = 1;
       } else if (
         this.filteredUsers.length > 10 &&
-        this.filteredUsers.length < 10 * this.totalPages
+        this.filteredUsers.length < (10 * this.totalPages)
       ) {
         this.lastIndex = this.filteredUsers.length;
       } else {

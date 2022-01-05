@@ -237,7 +237,7 @@ export default {
       if (this.pageNumber === 1) {
         this.firstIndex = this.pageNumber;
       } else this.firstIndex = this.pageNumber + 10 - 1;
-      this.lastIndex = this.pageNumber * 10;
+      // this.lastIndex = this.pageNumber * 10;
     },
 
     filteredUsers() {
@@ -249,6 +249,7 @@ export default {
         this.filteredUsers.length > 10 &&
         this.filteredUsers.length < (10 * this.totalPages)
       ) {
+        this.totalNumPerPage = 10;
         this.lastIndex = this.filteredUsers.length;
       } else {
         this.totalNumPerPage = 10;

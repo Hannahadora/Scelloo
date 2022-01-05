@@ -12,6 +12,7 @@
         :value="value"
         :id="id"
         @input="onInput"
+        @click="$emit('handleClick')"
       />
     </div>
   </div>

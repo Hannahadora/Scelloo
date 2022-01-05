@@ -19,6 +19,7 @@
           :id="option.value"
           :value="option.value"
           v-model="sortOptions"
+          @update="openFilter = false"
         />
       </div>
       <div class="mt-8_2">
@@ -31,6 +32,7 @@
           :id="option.value"
           :value="option.value"
           v-model="userOptions"
+          @update="openFilter = false"
         />
       </div>
     </div>
@@ -76,7 +78,7 @@ export default {
   watch: {
     sortOptions() {
       if (this.sortOptions === "allDef") {
-        return this.users;
+        return this.$store.getters.getUsers
       }
       if (this.sortOptions === "firstName") {
         return this.users.sort((a, b) =>
@@ -122,6 +124,9 @@ export default {
       this.openFilter = false;
     },
   },
+
+  created() {
+  }
 };
 </script>
 

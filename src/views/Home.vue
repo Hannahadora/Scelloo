@@ -110,7 +110,10 @@
                   >
                 </div>
                 <span class="text-pry-var text-xs"
-                  >Last login: <span class="uppercase">{{ convertDate(user.lastLogin) }}</span></span
+                  >Last login:
+                  <span class="uppercase">{{
+                    convertDate(user.lastLogin)
+                  }}</span></span
                 >
               </td>
               <td>
@@ -124,7 +127,9 @@
                 </div>
                 <div class="text-pry-var text-xs">
                   Paid on:
-                  <span class="uppercase" v-if="user.paidOn">{{ convertDate(user.paidOn) }}</span>
+                  <span class="uppercase" v-if="user.paidOn">{{
+                    convertDate(user.paidOn)
+                  }}</span>
                   <span v-else>Nil</span>
                 </div>
               </td>
@@ -218,7 +223,7 @@ export default {
       searchWord: "",
       totalNumPerPage: 10,
       pageNumber: 1,
-      totalPages: null,
+      totalPages: 0,
       currentUser: "",
       firstIndex: 1,
       lastIndex: 10,
@@ -246,27 +251,22 @@ export default {
     },
 
     filteredUsers() {
-      if (this.filteredUsers.length <= 9) {
+      if (this.filteredUsers.length <= 10) {
         this.totalNumPerPage = this.filteredUsers.length;
-        this.lastIndex = this.filteredUsers.length;
-        this.totalPages = 1;
-      // } if (
-      //   this.filteredUsers.length > 10 &&
-      //   this.filteredUsers.length < (10 * this.totalPages)
-      // ) {
-      //   this.totalNumPerPage = 10;
-      //   this.lastIndex = this.filteredUsers.length
-      // } else {
-      //   this.totalNumPerPage = 10;
-      //   this.totalPages = this.filteredUsers.length / this.totalNumPerPage;
-      //   this.lastIndex+10
+           this.lastIndex = this.filteredUsers.length;
       }
+      this.totalPages = Math.ceil(
+        this.filteredUsers.length / this.totalNumPerPage
+      );
     },
 
     allSelected() {
       if (this.allSelected === true) {
         this.users.forEach((user) => this.userIds.push(user.id));
-      } else if (this.allSelected == true && this.userIds.length < this.users.length) {
+      } else if (
+        this.allSelected == true &&
+        this.userIds.length < this.users.length
+      ) {
         this.allSelected = false;
       }
     },
@@ -278,7 +278,10 @@ export default {
     }),
 
     displayedUsers() {
-      return this.filteredUsers && this.filteredUsers.slice(this.firstIndex - 1, this.lastIndex);
+      return (
+        this.filteredUsers &&
+        this.filteredUsers.slice(this.firstIndex - 1, this.lastIndex)
+      );
     },
 
     filteredUsers() {

@@ -103,14 +103,10 @@ export default {
         return this.users;
       }
       if (this.userOptions === "active") {
-        return this.users.filter((user) => {
-          return user.userStatus === "active";
-        });
+       return this.users.sort((a, b) => a.userStatus.localeCompare(b.userStatus));
       }
       if (this.userOptions === "inactive") {
-        return this.users.filter((user) => {
-          return user.userStatus === "inactive";
-        });
+         return this.users.sort((a, b) => b.userStatus.localeCompare(a.userStatus));
       }
     },
   },

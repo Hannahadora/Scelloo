@@ -253,11 +253,20 @@ export default {
     filteredUsers() {
       if (this.filteredUsers.length <= 10) {
         this.totalNumPerPage = this.filteredUsers.length;
-           this.lastIndex = this.filteredUsers.length;
+        this.lastIndex = this.filteredUsers.length;
+      }else {
+        this.totalNumPerPage = 10;
+        this.lastIndex = 10;
       }
       this.totalPages = Math.ceil(
         this.filteredUsers.length / this.totalNumPerPage
       );
+    },
+
+    totalPages() {
+      if(this.totalPages === 1) {
+        this.firstIndex = 1
+      }
     },
 
     allSelected() {

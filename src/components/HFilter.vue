@@ -78,7 +78,7 @@ export default {
   watch: {
     sortOptions() {
       if (this.sortOptions === "allDef") {
-        return this.users
+        return this.xUsers
       }
       if (this.sortOptions === "firstName") {
         return this.users.sort((a, b) =>
@@ -116,6 +116,7 @@ export default {
   computed: {
     ...mapGetters({
       users: ["getUsers"],
+      xUsers: ['xUsers']
     }),
   },
 

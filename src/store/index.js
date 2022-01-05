@@ -83,6 +83,20 @@ export default new Vuex.Store({
         commit("SET_LOADING", false, { root: true });
       }
     },
+    markAsUnpaid: async ({ commit, dispatch }, id) => {
+      commit("SET_LOADING", true);
+      try {
+        const res = await api.patch(`/mark-unpaid/${id}`)
+        if(res.status === 'true') {
+          commit('SET_USERS', res.data)
+        }
+      } catch(err) {
+        console.log(err);
+      } finally {
+        await dispatch('fetchUsers')
+        commit("SET_LOADING", false, { root: true });
+      }
+    },
     deactivate: async ({ commit, dispatch }, id) => {
       commit("SET_LOADING", true);
       try {
@@ -115,7 +129,7 @@ export default new Vuex.Store({
   },
 
   getters: {
-    getUsers:(state)=>state.users.data
+    getUsers:(state)=>state.users.data,
   },
 
   modules: {

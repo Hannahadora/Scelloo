@@ -18,7 +18,7 @@
         @click="closeMenu"
       />
       <ul>
-        <li class="menu-items-row text-pry-var" @click="markPaid">Edit</li>
+        <li class="menu-items-row text-pry-var" @click="markPaid">{{ paymentText }}</li>
         <li class="menu-items-row text-pry-var"  @click="viewProfile">View Profile</li>
         <li class="menu-items-row positive mb-2" @click="toggleUserStatus">{{ initText }}</li>
         <li class="menu-items-row negative del-btn" @click="deleteUser">Delete</li>
@@ -43,7 +43,7 @@ export default {
     };
   },
 
-  props: ['initText'],
+  props: ['initText', 'paymentText'],
 
   methods: {
     closeMenu() {

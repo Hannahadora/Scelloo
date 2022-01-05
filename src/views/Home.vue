@@ -141,10 +141,15 @@
                       ? 'Deactivate User'
                       : 'Activate User'
                   "
+                  :paymentText="
+                    user.paymentStatus === 'paid'
+                      ? 'Mark as unpaid'
+                      : 'Mark as paid'
+                  "
                   @openDetails="setCurrentUser(user)"
                   @toggleUserStatus="toggleUserStatus(user)"
                   @deleteUser="deleteUser(user)"
-                  @markPaid="markAsPaid(user)"
+                  @markPaid="togglePaymentStatus(user)"
                   @ViewProfile="viewProfile(user)"
                 />
               </td>
@@ -211,7 +216,7 @@ export default {
     return {
       type: "",
       searchWord: "",
-      totalNumPerPage: "",
+      totalNumPerPage: 10,
       pageNumber: 1,
       totalPages: null,
       currentUser: "",
@@ -236,8 +241,8 @@ export default {
     pageNumber() {
       if (this.pageNumber === 1) {
         this.firstIndex = this.pageNumber;
-      } else this.firstIndex = this.pageNumber + 10 - 1;
-      // this.lastIndex = this.pageNumber * 10;
+      } else this.firstIndex = this.pageNumber + (this.totalNumPerPage - 1);
+      this.lastIndex = this.pageNumber * this.totalNumPerPage;
     },
 
     filteredUsers() {
@@ -245,23 +250,23 @@ export default {
         this.totalNumPerPage = this.filteredUsers.length;
         this.lastIndex = this.filteredUsers.length;
         this.totalPages = 1;
-      } else if (
-        this.filteredUsers.length > 10 &&
-        this.filteredUsers.length < (10 * this.totalPages)
-      ) {
-        this.totalNumPerPage = 10;
-        this.lastIndex = this.filteredUsers.length;
-      } else {
-        this.totalNumPerPage = 10;
-        this.totalPages = this.filteredUsers.length / this.totalNumPerPage;
-        this.lastIndex = this.filteredUsers.length;
+      // } if (
+      //   this.filteredUsers.length > 10 &&
+      //   this.filteredUsers.length < (10 * this.totalPages)
+      // ) {
+      //   this.totalNumPerPage = 10;
+      //   this.lastIndex = this.filteredUsers.length
+      // } else {
+      //   this.totalNumPerPage = 10;
+      //   this.totalPages = this.filteredUsers.length / this.totalNumPerPage;
+      //   this.lastIndex+10
       }
     },
 
     allSelected() {
       if (this.allSelected === true) {
         this.users.forEach((user) => this.userIds.push(user.id));
-      } else if (this.allSelected == true && this.userIds.length < 20) {
+      } else if (this.allSelected == true && this.userIds.length < this.users.length) {
         this.allSelected = false;
       }
     },
@@ -273,7 +278,7 @@ export default {
     }),
 
     displayedUsers() {
-      return this.filteredUsers.slice(this.firstIndex - 1, this.lastIndex);
+      return this.filteredUsers && this.filteredUsers.slice(this.firstIndex - 1, this.lastIndex);
     },
 
     filteredUsers() {
@@ -341,10 +346,10 @@ export default {
     },
 
     selectAll() {
-      if (this.userIds.length < 20) {
+      if (this.userIds.length < this.users.length) {
         this.allSelected = true;
       }
-      if ((this.userIds.length = 20)) {
+      if ((this.userIds.length = this.users.length)) {
         this.userIds = [];
       }
     },
@@ -366,9 +371,10 @@ export default {
       }
     },
 
-    markAsPaid(user) {
+    togglePaymentStatus(user) {
       if (user.paymentStatus === "paid") {
-        alert(`${user.firstName} ${user.lastName} has already paid`);
+        this.$store.dispatch("markAsUnpaid", user.id);
+        alert(`${user.firstName} ${user.lastName} marked as unpaid`);
       } else {
         this.$store.dispatch("markAsPaid", user.id);
         alert(`${user.firstName} ${user.lastName} marked as paid`);
